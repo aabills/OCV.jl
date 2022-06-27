@@ -14,7 +14,6 @@ abstract type OpenCircuitVoltage end
 
 struct RKPolynomial{T,S} <: OpenCircuitVoltage
     Aterms::T
-    mycache::T
     U_0::S
     c_s_max::S
     c_s_min::S
