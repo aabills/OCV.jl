@@ -15,6 +15,7 @@ abstract type OpenCircuitVoltage end
 struct RKPolynomial{T,S} <: OpenCircuitVoltage
     Aterms::T
     U_0::S
+    c_s_max::S
     nA::Int
     # UpperFillingFraction
     # LowerFillingFraction
