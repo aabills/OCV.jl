@@ -14,6 +14,7 @@ abstract type OpenCircuitVoltage end
 
 struct RKPolynomial{T,S} <: OpenCircuitVoltage
     Aterms::T
+    mycache::T
     U_0::S
     c_s_max::S
     c_s_min::S
@@ -37,13 +38,14 @@ function calcocv(RK::RKPolynomial,x::W,T) where {W}
     n=1.
     R=8.314
     a=1
-    rk::W = RK.Aterms[1]*((2 *x-1)^((a-1) +1))
+    @inbounds rk::W = RK.Aterms[1]*((2 *x-1)^((a-1) +1))
     # Activity Correction Summation
-    @inbounds for a in 2:RK.nA
-       rk += RK.Aterms[a]*((2 *x-1)^((a-1) +1) - (2 *x*(a-1) *(1 -x)/ (2 *x-1)^(1 -(a-1))))
+    @simd for a in 2:RK.nA
+       @inbounds @fastmath rk += RK.Aterms[a]*((2 *x-1)^((a-1) +1) - (2 *x*(a-1) *(1 -x)/ (2 *x-1)^(1 -(a-1))))
     end
-    voltage::W = rk/(n*F)+RK.U_0+((R*T)/(n*F) * log((1 -x)/x))
+    voltage::W = @fastmath rk/(n*F)+RK.U_0+((R*T)/(n*F) * log((1 -x)/x))
     return voltage
+
 end
 
 
