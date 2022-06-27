@@ -16,6 +16,7 @@ struct RKPolynomial{T,S} <: OpenCircuitVoltage
     Aterms::T
     U_0::S
     c_s_max::S
+    c_s_min::S
     nA::Int
     # UpperFillingFraction
     # LowerFillingFraction
@@ -25,7 +26,7 @@ end
 # Constructor for RK Polynomial
 #
 function RKPolynomial(Aterms,U_0,c_s_max)
-    return RKPolynomial(Aterms,U_0,c_s_max,length(Aterms))
+    return RKPolynomial(Aterms,U_0,c_s_max,c_s_min,length(Aterms))
 end
 
 #
