@@ -27,8 +27,8 @@ c_s_max⁻ = 100000.0
 c_s_min⁺ = 0.0
 c_s_min⁻ = 0.0
 
-cathodeocv = OCV.RKPolynomial(A_p,similar(A_p),U_0_p,c_s_max⁺,c_s_min⁺,length(A_p))
-anodeocv   = OCV.RKPolynomial(A_n,similar(A_n),U_0_n,c_s_max⁻,c_s_min⁻,length(A_n))
+cathodeocv = OCV.RKPolynomial(A_p,U_0_p,c_s_max⁺,c_s_min⁺,length(A_p))
+anodeocv   = OCV.RKPolynomial(A_n,U_0_n,c_s_max⁻,c_s_min⁻,length(A_n))
 
 x = 0.2
 benchmark = @benchmark OCV.calcocv($anodeocv,$x,285.0)
