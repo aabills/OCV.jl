@@ -25,7 +25,7 @@ end
 #
 # Constructor for RK Polynomial
 #
-function RKPolynomial(Aterms,U_0,c_s_max)
+function RKPolynomial(Aterms,U_0,c_s_max,c_s_min)
     return RKPolynomial(Aterms,U_0,c_s_max,c_s_min,length(Aterms))
 end
 
