@@ -44,7 +44,37 @@ function calcocv(RK::RKPolynomial,x::W,T) where {W}
     end
     voltage::W = @fastmath rk/(n*F)+RK.U_0+((R*T)/(n*F) * log((1 -x)/x))
     return voltage
+end
 
+#
+# Function to calculate the filling fraction of an OCV given a voltage
+# 
+function get_x_from_voltage(RK::RKPolynomial,V::W,T::W) where {W}
+# Find if this is an increasing or decreasing OCV
+x₁ = 0.2
+x₂ = 0.3
+V₁ = calcocv(RK,x₁,T)
+V₂ = calcocv(RK,x₂,T)
+if V₁ ≥ V₂
+end
+
+
+
+end
+
+#
+# Quick and dirty bisection implementation
+#
+function mybisection(V::W,min::W,max::W,RK::RKPolynomial,T::W;atol::W=1e-1) where {W}
+    mid = (min + max) / 2
+    V̂ = calcocv(RK,mid,T)
+    if abs(V̂-V)≤atol
+        return mid
+    elseif V̂ > V
+        return mybisection(V,min,mid,RK,T,atol=atol)
+    else
+        return mybisection(V,mid,max,RK,T,atol=atol)
+    end
 end
 
 
