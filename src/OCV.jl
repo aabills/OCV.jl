@@ -49,23 +49,28 @@ end
 #
 # Function to calculate the filling fraction of an OCV given a voltage
 # 
-function get_x_from_voltage(RK::RKPolynomial,V::W,T::W) where {W}
+function get_x_from_voltage(RK::RKPolynomial,V::W,T::W;atol=1e-10) where {W}
 # Find if this is an increasing or decreasing OCV
 x₁ = 0.2
 x₂ = 0.3
 V₁ = calcocv(RK,x₁,T)
 V₂ = calcocv(RK,x₂,T)
 if V₁ ≥ V₂
+    return OCV.mybisection(V,1.0,0.0,RK,T,atol=atol)
+else
+    return OCV.mybisection(V,0.0,0.1,RK,T,atol=atol)
+end
+
 end
 
 
 
-end
+
 
 #
 # Quick and dirty bisection implementation
 #
-function mybisection(V::W,min::W,max::W,RK::RKPolynomial,T::W;atol::W=1e-1) where {W}
+function mybisection(V::W,min::W,max::W,RK::RKPolynomial,T::W;atol::W=1e-10) where {W}
     mid = (min + max) / 2
     V̂ = calcocv(RK,mid,T)
     if abs(V̂-V)≤atol
@@ -111,6 +116,6 @@ function MonotonicDecreaseLeastSquaresFit(A,y)
     return model,x,ŷ
 end
 
-export RKPolynomial,calcocv,MonotonicIncreaseLeastSquaresFit,MonotonicDecreaseLeastSquaresFit
+export RKPolynomial,calcocv,MonotonicIncreaseLeastSquaresFit,MonotonicDecreaseLeastSquaresFit,get_x_from_voltage
 
 end # module

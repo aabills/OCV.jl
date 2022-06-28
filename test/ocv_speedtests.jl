@@ -34,3 +34,5 @@ x = 0.2
 benchmark = @benchmark OCV.calcocv($anodeocv,$x,285.0)
 V = OCV.calcocv(anodeocv,x,285.0)
 
+@test benchmark.allocs == 0
+
