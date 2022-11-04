@@ -88,8 +88,9 @@ end
 # 
 function MonotonicIncreaseLeastSquaresFit(A,y)
     model = Model(Ipopt.Optimizer)
+    num_As = size(A)[2]
     dim = length(y)
-    @variable(model,x[1:dim])
+    @variable(model,x[1:num_As])
     @variable(model,ŷ[1:dim])
     for i in 2:dim
         @constraint(model,ŷ[i]>=ŷ[i-1])
@@ -104,8 +105,9 @@ end
 # 
 function MonotonicDecreaseLeastSquaresFit(A,y)
     model = Model(Ipopt.Optimizer)
+    num_As = size(A)[2]
     dim = length(y)
-    @variable(model,x[1:dim])
+    @variable(model,x[1:num_As])
     @variable(model,ŷ[1:dim])
     for i in 2:dim
         @constraint(model,ŷ[i]<=ŷ[i-1])
