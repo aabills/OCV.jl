@@ -70,7 +70,7 @@ end
 #
 # Quick and dirty bisection implementation
 #
-function mybisection(V::W,min::W,max::W,RK::RKPolynomial,T::W;atol::W=1e-10) where {W}
+function mybisection(V, min, max, RK::RKPolynomial, T; atol=1e-10)
     mid = (min + max) / 2
     V̂ = calcocv(RK,mid,T)
     if abs(V̂-V)≤atol
