@@ -49,7 +49,7 @@ end
 #
 # Function to calculate the filling fraction of an OCV given a voltage
 # 
-function get_x_from_voltage(RK::RKPolynomial,V::W,T::W;atol=1e-10) where {W}
+function get_x_from_voltage(RK::RKPolynomial, V, T;atol=1e-10)
 # Find if this is an increasing or decreasing OCV
 x₁ = 0.2
 x₂ = 0.3
