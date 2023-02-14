@@ -1,11 +1,18 @@
 module OCV
-using JuMP
+using Reexport
+@reexport using JuMP
+@reexport using DataInterpolations
 import Ipopt
+
+const F=96485.33212
+const n=1.
+const R=8.314
+
+
 
 #
 # Type to Represent an RK Polynomial
 #
-
 abstract type OpenCircuitVoltage end
 
 #Evaluate OpenCircuitVoltage types
@@ -49,7 +56,7 @@ end
 #
 # Function to calculate the filling fraction of an OCV given a voltage
 # 
-function get_x_from_voltage(RK::RKPolynomial, V, T;atol=1e-10)
+function get_x_from_voltage(RK::OpenCircuitVoltage, V, T;atol=1e-10)
 # Find if this is an increasing or decreasing OCV
 x₁ = 0.2
 x₂ = 0.3
@@ -63,6 +70,26 @@ end
 
 end
 
+function RK_Matrix(x, num_terms)
+    mat = zeros(length(x), num_terms+1)
+    a=1
+    mat[:,1] .= ((2 .*x.-1).^((a.-1) .+1))
+    # Activity Correction Summation
+    for a in 2:num_terms
+         mat[:, a] = ((2 .*x.-1).^((a.-1) .+1) .- (2 .*x.*(a.-1) .*(1 .-x)./ (2 .*x.-1).^(1 .-(a.-1))))
+    end
+    mat[:, end] .= OCV.F
+    return mat
+end
+
+function get_lhs(voltage, x, T)
+    if length(voltage) != length(x)
+        error("length of voltage must equal length of x")
+    end
+    lhs = n*OCV.F.*voltage - OCV.R.*T.*log.((1 .-x)./x)
+    return lhs
+end
+
 
 
 
@@ -70,7 +97,7 @@ end
 #
 # Quick and dirty bisection implementation
 #
-function mybisection(V, min, max, RK::RKPolynomial, T; atol=1e-10)
+function mybisection(V, min, max, RK::OpenCircuitVoltage, T; atol=1e-10)
     mid = (min + max) / 2
     V̂ = calcocv(RK,mid,T)
     if abs(V̂-V)≤atol
@@ -119,5 +146,9 @@ function MonotonicDecreaseLeastSquaresFit(A,y)
 end
 
 export RKPolynomial,calcocv,MonotonicIncreaseLeastSquaresFit,MonotonicDecreaseLeastSquaresFit,get_x_from_voltage
+
+include("spline_ocvs.jl")
+export SplineOCV
+
 
 end # module
